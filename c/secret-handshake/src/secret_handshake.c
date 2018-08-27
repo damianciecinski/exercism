@@ -11,40 +11,49 @@
 
 #include "secret_handshake.h"
 
-#define REVERSE_CODE_MASK (1 << 4)
+#define REVERSE_CODE_MASK (1UL << 4)
 #define MAX_CODES (4)
 
-const char wink[] = "wink";
-const char double_blink[] = "double blink";
-const char close_yours_eyes[] = "close your eyes";
-const char jump[] = "jump";
+const char * codes_array[] = { "wink", "double blink", "close your eyes", "jump" };
 
-const char * codes_array[] = { wink, double_blink, close_yours_eyes, jump };
-const char * reversed_codes_array[] = { jump, close_yours_eyes, double_blink, wink };
-
-const char ** commands(uint32_t code)
+/**
+ * @brief Convert given a decimal number to the appropriate 
+ *        sequence of events for a secret handshake.
+ *
+ * @param code secret code
+ *
+ * @return pointer to the list of the secret handshakes  
+ */
+const char ** commands(uint8_t code)
 {
-    char ** res = calloc(1, sizeof(char*));
-    char ** _codes_array = (char**)codes_array;
+    uint8_t indexes[MAX_CODES] = {0};
+    uint8_t _code = code;
     uint8_t it = 0;
-
-    if(code & REVERSE_CODE_MASK)
-    {
-        _codes_array = (char **)reversed_codes_array;
-    }
 
     for(uint8_t c = 0; c < MAX_CODES; c++)
     {
-        if(code & 0x01)
+        if(_code & 0x01)
         {
-            res = (char **)realloc(res,(it + 1) * sizeof(char*));
-            res[it] = _codes_array[c];
-            it++;
+            indexes[it++] = c;
         }
 
-        code >>= 1;
+        _code >>= 1;
     } 
 
-    return (const char **)res;
+    char const ** res = calloc(it, sizeof(char *));
+
+    for(uint8_t i = 0; i < it; i++)
+    {
+        if(code & REVERSE_CODE_MASK)
+        {
+            res[it - 1 - i] = codes_array[indexes[i]];
+        }
+        else
+        {
+            res[i] = codes_array[indexes[i]];
+        }
+    }
+
+    return res;
 }
 

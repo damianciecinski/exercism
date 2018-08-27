@@ -10,6 +10,6 @@
 
 #include <stdint.h>
 
-const char ** commands(uint32_t);
+const char ** commands(uint8_t);
 
 #endif /* !SECRET_HANDSHAKE_H */
