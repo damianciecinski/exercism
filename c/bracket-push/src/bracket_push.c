@@ -5,12 +5,21 @@
  * Distributed under terms of the MIT license.
  */
 
-#include "bracket_push.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+#include "bracket_push.h"
+
+/**
+ * @brief Verifies that all the bracket's pairs are matched
+ *        and nested correctly.
+ *
+ * @param inp_txt    input text as string
+ *
+ * @return true: valid, false: invalid
+ */
 
 bool is_paired(const char * inp_txt)
 {
@@ -68,7 +77,6 @@ bool is_paired(const char * inp_txt)
                             /* nothing to do */
                             break;
                         }
-                        
                 }
 
                 if(false == is_paired)
@@ -85,6 +93,8 @@ bool is_paired(const char * inp_txt)
             {
                 res = false;
             }
+
+            free(buf);
         }
     }
 
