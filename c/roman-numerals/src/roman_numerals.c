@@ -36,6 +36,7 @@ static const rom_num_mapping_t rom_num_mapping[] =
 };
 
 #define ROM_NUM_MAPPING_SIZE (sizeof(rom_num_mapping)/sizeof(rom_num_mapping[0]))
+#define MAX_OUTPUT_STRING (128)
 
 /**
  * @brief Converts number to roman numerals.
@@ -46,7 +47,7 @@ static const rom_num_mapping_t rom_num_mapping[] =
  */
 char * to_roman_numeral(int number)
 {
-    char * ret = calloc(1, sizeof(char));
+    char * ret = calloc(MAX_OUTPUT_STRING, sizeof(char));
     uint8_t ret_counter = 0;
     for(uint8_t rs = 0; rs < ROM_NUM_MAPPING_SIZE; rs++)
     {
@@ -54,13 +55,14 @@ char * to_roman_numeral(int number)
         for(uint8_t m = 0; m < mul; m++)
         {
             uint8_t len = strlen(rom_num_mapping[rs].roman_numeral);
-            ret = realloc(ret, ret_counter + len);
-            strcpy(&ret[ret_counter], rom_num_mapping[rs].roman_numeral);
-            ret_counter += len;
+            if(ret_counter + len < MAX_OUTPUT_STRING)
+            {
+                strcpy(&ret[ret_counter], rom_num_mapping[rs].roman_numeral);
+                ret_counter += len;
+            }
         }
         number %= (rom_num_mapping[rs].normal_number);
     }
 
-    ret[ret_counter] = 0;
     return ret;
 }
