@@ -29,13 +29,9 @@
  * 
  * @param score     allergy score
  */
-static inline void allign_to_allowed_score(uint32_t * score)
+static inline void align_to_allowed_score(uint32_t * score)
 {
-    uint32_t max_score = ALLERGEN_VALUE(ALLERGEN_COUNT);
-    while(*score > max_score)
-    {
-        *score -= max_score;
-    }
+    *score &= ALLERGEN_VALUE(ALLERGEN_COUNT) - 1;
 }
 
 /**
@@ -51,11 +47,13 @@ static inline void allign_to_allowed_score(uint32_t * score)
 static inline uint32_t is_allergen(uint32_t * score, allergen_t allergen)
 {
     uint32_t allergen_score = ALLERGEN_VALUE(allergen), count_allergen = 0;
+
     while(*score >= allergen_score) 
     {
         count_allergen++;
         *score -= allergen_score;
     }
+
     return count_allergen;
 }
 
@@ -72,9 +70,10 @@ static inline uint32_t is_allergen(uint32_t * score, allergen_t allergen)
 bool is_allergic_to(allergen_t allergen, uint32_t score)
 {
     bool res = false;
+
     if(allergen < ALLERGEN_COUNT)
     {
-        allign_to_allowed_score(&score);
+        align_to_allowed_score(&score);
 
         for(int8_t a = (ALLERGEN_COUNT - 1); a >= 0; a--)
         {
@@ -108,7 +107,7 @@ void get_allergens(uint32_t score, allergen_list_t * allergen_list)
         allergen_list->count = 0;
         allergen_list->allergens = calloc(MAX_ALLEGRENS_IN_LIST, sizeof(allergen_t));
         
-        allign_to_allowed_score(&score);
+        align_to_allowed_score(&score);
 
         for(int8_t a = (ALLERGEN_COUNT - 1); a >= 0; a--)
         {
